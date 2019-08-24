@@ -39,12 +39,12 @@ func handleConnection(conn net.Conn) {
 
 	request := make([]byte, 1024)
 
-	number, err := conn.Read(request)
+	n, err := conn.Read(request)
 	checkError(err)
 
-	strRequest := string(request[:number])
+	strRequest := string(request[:n])
 
-	number, err = strconv.Atoi(strRequest)
+	number, err := strconv.Atoi(strRequest)
 	checkError(err)
 
 	response := fibbonacci(number)
@@ -70,5 +70,4 @@ func fibbonacci(a int) int {
 	} else {
 		return fibbonacci(a - 1) + fibbonacci(a - 2)
 	}
-
 }
