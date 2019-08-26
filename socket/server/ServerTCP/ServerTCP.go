@@ -1,24 +1,25 @@
 package main
 
 import (
-	"net"
 	"fmt"
-	"os"
+	"net"
 	"strconv"
+	"github.com/akai16/SistemasDistribuidos/application"
+	"github.com/akai16/SistemasDistribuidos/shared"
 )
 
 func main() {
-	
+
 	// Localhost at port 7171
-	service :=":7171"
-	
+	service := ":" + strconv.Itoa(shared.TCP_PORT)
+
 	// Get TCP Address
 	tcpAddr, err := net.ResolveTCPAddr("tcp", service)
-	checkError(err)
+	shared.CheckError(err)
 
-	// Prepare to Listen 
+	// Prepare to Listen
 	listener, err := net.ListenTCP("tcp", tcpAddr)
-	checkError(err)
+	shared.CheckError(err)
 	fmt.Println("Server listening at", service)
 
 	// Infinite loop to listen to connections
@@ -40,34 +41,15 @@ func handleConnection(conn net.Conn) {
 	request := make([]byte, 1024)
 
 	n, err := conn.Read(request)
-	checkError(err)
+	shared.CheckError(err)
 
 	strRequest := string(request[:n])
 
 	number, err := strconv.Atoi(strRequest)
-	checkError(err)
+	shared.CheckError(err)
 
-	response := fibbonacci(number)
+	response := application.Fibbonacci(number)
 
 	conn.Write([]byte(strconv.Itoa(response)))
-	
-}
 
-func checkError(err error) {
-	if err != nil {
-		fmt.Println("Fatal error: ", err.Error())
-		os.Exit(1)
-	}
-}
-
-func fibbonacci(a int) int { 
-	if a == 0 {
-		return 0
-	} else if a == 1 {
-		return 1
-	} else if a == 2 {
-		return 1
-	} else {
-		return fibbonacci(a - 1) + fibbonacci(a - 2)
-	}
 }

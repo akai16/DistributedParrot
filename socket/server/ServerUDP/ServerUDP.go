@@ -3,32 +3,28 @@ package main
 import (
 	"fmt"
 	"net"
-	"os"
 	"strconv"
+	"github.com/akai16/SistemasDistribuidos/application"
+	"github.com/akai16/SistemasDistribuidos/shared"
 )
-
 
 func main() {
 
-	service := ":7171"
+	service := ":" + strconv.Itoa(shared.UDP_PORT)
 
 	addr, err := net.ResolveUDPAddr("udp", service)
-	checkError(err)
+	shared.CheckError(err)
 
 	conn, err := net.ListenUDP("udp", addr)
-	checkError(err)
+	shared.CheckError(err)
 	fmt.Println("UDP Server listening at", service)
-
 
 	for {
 		//go handleConnection(conn)
 		handleConnection(conn)
 	}
 
-
 }
-
-
 
 func handleConnection(conn *net.UDPConn) {
 
@@ -41,29 +37,10 @@ func handleConnection(conn *net.UDPConn) {
 
 	number, _ := strconv.Atoi(string(request[:n]))
 
-	response := fibbonacci(number)
+	response := application.Fibbonacci(number)
 
-	_, err = conn.WriteTo([]byte(strconv.Itoa(response)), addr)
-	checkError(err)
-}
+	// _, err = conn.WriteTo([]byte(strconv.Itoa(response)), addr)
+	// checkError(err)
 
-
-
-func checkError(err error) {
-	if err != nil {
-		fmt.Println("Fatal error: ", err.Error())
-		os.Exit(1)
-	}
-}
-
-func fibbonacci(a int) int { 
-	if a == 0 {
-		return 0
-	} else if a == 1 {
-		return 1
-	} else if a == 2 {
-		return 1
-	} else {
-		return fibbonacci(a - 1) + fibbonacci(a - 2)
-	}
+	conn.WriteToUDP([]byte(strconv.Itoa(response)), addr)
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strconv"
+	"github.com/akai16/SistemasDistribuidos/shared"
 )
 
 func main() {
@@ -14,34 +16,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Localhost at port 7171
-	service := ":7171"
+	// Localhost at port 1200
+	service := ":" + strconv.Itoa(shared.UDP_PORT)
 
 	addr, err := net.ResolveUDPAddr("udp", service)
-	checkError(err)
+	shared.CheckError(err)
 
 	conn, err := net.DialUDP("udp", nil, addr)
-	checkError(err)
-	defer conn.Close()
+	shared.CheckError(err)
+
+	//defer conn.Close()
 
 	number := os.Args[1]
 	request := []byte(number)
-	
+
 	_, err = conn.Write(request)
-	checkError(err)
+	shared.CheckError(err)
 
 	response := make([]byte, 1024)
-	_, _, err = conn.ReadFromUDP(response)
-	checkError(err)
+	// _, _, err = conn.ReadFromUDP(response)
+	_, err = conn.Read(response)
+	shared.CheckError(err)
 
 	fmt.Println(string(response))
 	os.Exit(0)
 
-}
-
-func checkError(err error) {
-	if err != nil {
-		fmt.Println("Fatal error: ", err.Error())
-		os.Exit(1)
-	}
 }

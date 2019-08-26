@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
-	"io/ioutil"
+	"strconv"
+	"github.com/akai16/SistemasDistribuidos/shared"
 )
-
 
 func main() {
 
@@ -17,32 +18,24 @@ func main() {
 	}
 
 	// Localhost at port 7171
-	service := ":7171"
+	service := ":" + strconv.Itoa(shared.TCP_PORT)
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", service)
-	checkError(err)
+	shared.CheckError(err)
 
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	checkError(err)
+	shared.CheckError(err)
 
 	number := os.Args[1]
 	request := []byte(number)
-	
+
 	_, err = conn.Write(request)
-	checkError(err)
+	shared.CheckError(err)
 
 	result, err := ioutil.ReadAll(conn)
-	checkError(err)
+	shared.CheckError(err)
 
 	fmt.Println(string(result))
 	os.Exit(0)
 
-}
-
-
-func checkError(err error) {
-	if err != nil {
-		fmt.Println("Fatal error: ", err.Error())
-		os.Exit(1)
-	}
 }
