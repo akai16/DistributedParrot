@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"github.com/akai16/SistemasDistribuidos/application"
-	"github.com/akai16/SistemasDistribuidos/shared"
+	"application"
+	"shared"
 )
 
 func main() {
@@ -19,9 +19,13 @@ func main() {
 	shared.CheckError(err)
 	fmt.Println("UDP Server listening at", service)
 
+	limit := 0
 	for {
-		//go handleConnection(conn)
-		handleConnection(conn)
+		if limit <= 100{
+			go handleConnection(conn)
+			limit++
+		}
+		//handleConnection(conn)
 	}
 
 }

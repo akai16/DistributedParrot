@@ -5,7 +5,7 @@ import (
 	"net"
 	"os"
 	"strconv"
-	"github.com/akai16/SistemasDistribuidos/shared"
+	"shared"
 )
 
 func main() {
